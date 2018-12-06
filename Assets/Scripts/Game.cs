@@ -15,8 +15,12 @@ public class Game : MonoBehaviour {
     public GameObject hillPrefab;
     public GameObject emptyCirclePrefab;
     public GameObject yellowCircle;
-    public GameObject firstPage;
+    public GameObject successModalWindow;
+    public GameObject failModalWindow;
     public Button buttonStartGame;
+
+    public Button showSuccessModal;
+    public Button showFailModal;
 
     int level;
     Task[] tasks;
@@ -52,6 +56,8 @@ public class Game : MonoBehaviour {
         allEmptyRect = new List<GameObject>();
         canvasWidth = canvasRect.rect.width;
         yellowCircle.SetActive(false);
+        successModalWindow.SetActive(false);
+        failModalWindow.SetActive(false);
         CreatePlayground();
         CreateEmpty();
 	}
@@ -68,12 +74,6 @@ public class Game : MonoBehaviour {
 
         }
 	}
-
-    public void StartGame()
-    {
-        Debug.Log("start");
-        firstPage.SetActive(false);
-    }
 
     void CreatePlayground()
     {
@@ -114,6 +114,16 @@ public class Game : MonoBehaviour {
 
     }
 
+    public void ShowSuccessModalWindow()
+    {        
+        this.successModalWindow.SetActive(true);
+    }
+
+    public void ShowFailModalWindow()
+    {
+        this.failModalWindow.SetActive(true);
+    }
+
 
     class Task
     {
@@ -149,7 +159,7 @@ public class Game : MonoBehaviour {
             {
                 carrots[i] = 1;
             }
-            Shuffle(carrots);
+            Shuffle(carrots); 
             int[] empty = new int[] { 0 };
             return empty.Concat(carrots).ToArray();
 
