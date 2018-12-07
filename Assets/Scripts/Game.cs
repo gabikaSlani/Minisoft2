@@ -17,7 +17,7 @@ public class Game : MonoBehaviour {
     public GameObject yellowCircle;
     public GameObject successModalWindow;
     public GameObject failModalWindow;
-    public Button buttonStartGame;
+    public GameObject rabbit;
 
     public Button showSuccessModal;
     public Button showFailModal;
@@ -25,19 +25,20 @@ public class Game : MonoBehaviour {
     int level;
     Task[] tasks;
     Playground playground;
-    List<RectTransform> allHillsRect;
+    //List<RectTransform> allHillsRect;
+    List<GameObject> allHills;
     RectTransform carrotRect;
     List<RectTransform> allCarrotsRect;
     RectTransform emptyRect;
     List<GameObject> allEmptyRect;
     float canvasWidth;
     RectTransform canvasRect;
+    char[] state;
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         level = 1;
-        levelText.text = "" + level;
-        scoreText.text = "0/0";
+        levelText.text = level + "";
         tasks = new Task[]{
             new Task(1, 4, 1),
             new Task(2, 4, 2),
@@ -48,23 +49,29 @@ public class Game : MonoBehaviour {
             new Task(7, 7, 3),
             new Task(8, 7, 4)
         };
-        playground = new Playground(tasks[level + 6]);
+        playground = new Playground(tasks[level]);
         canvasRect = (RectTransform)gameObject.transform;
         carrotRect = (RectTransform)carrotPrefab.transform;
-        allHillsRect = new List<RectTransform>();
+        allHills = new List<GameObject>();
         allCarrotsRect = new List<RectTransform>();
         allEmptyRect = new List<GameObject>();
         canvasWidth = canvasRect.rect.width;
         yellowCircle.SetActive(false);
         successModalWindow.SetActive(false);
         failModalWindow.SetActive(false);
+        scoreText.text = "0/" + tasks[level].countCarrot.ToString();
         CreatePlayground();
         CreateEmpty();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyDown(KeyCode.Space))    //GetKeyDown - aby to spravilo len raz
+        //state v takejto forme lebo ho taham cez getter - zatial som nepotrebovala, testovala som na solution
+        //state = new char[4] { 'D', 'D', 'M', 'D'};
+        rabbit.transform.position = new Vector3(allHills[0].transform.position.x, allHills[0].transform.position.y + 58, 0);
+        rabbit.transform.SetAsLastSibling();
+
+    }
+
+    // Update is called once per frame
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Space))    //GetKeyDown - aby to spravilo len raz
         {
             //levelText.text = "" + level++;
             //
@@ -73,7 +80,7 @@ public class Game : MonoBehaviour {
             //newCarrot.transform.parent = gameObject.transform; //gameObject - je Canvas lebo script patri canvasu
 
         }
-	}
+    }
 
     void CreatePlayground()
     {
@@ -81,21 +88,21 @@ public class Game : MonoBehaviour {
         float hillWidth = hillRect.rect.width;
         int countHills = playground.GetHillsCount();
         float allHillsWidth = countHills * hillWidth;
-        float x = ((canvasWidth - allHillsWidth) / 2) + hillWidth/ 2;
+        float x = ((canvasWidth - allHillsWidth) / 2) + hillWidth / 2;
         for (int i = 0; i < countHills; i++)
         {
-            GameObject hill = Instantiate(hillPrefab, new Vector3(x + (i*hillWidth), 100, 0), Quaternion.identity);
+            GameObject hill = Instantiate(hillPrefab, new Vector3(x + (i * hillWidth), 100, 0), Quaternion.identity);
             hill.transform.SetParent(gameObject.transform);
-            allHillsRect.Add((RectTransform)hill.transform);
-            if(playground.GetPlayground()[i] == 1)
+            allHills.Add(hill);
+            if (playground.GetPlayground()[i] == 1)
             {
                 GameObject carrot = Instantiate(carrotPrefab, new Vector3(x + (i * hillWidth), 120, 0), Quaternion.identity);
                 carrot.transform.SetParent(gameObject.transform);
                 allCarrotsRect.Add((RectTransform)carrot.transform);
             }
-            
+
         }
-        
+
     }
 
     void CreateEmpty()
@@ -105,9 +112,9 @@ public class Game : MonoBehaviour {
         int countEmpty = playground.GetSolution().Count;
         float allEmptyWidth = countEmpty * emptyWidth;
         float x = ((canvasWidth - allEmptyWidth) / 2) + emptyWidth / 2;
-        for(int i = 0; i < countEmpty; i++)
+        for (int i = 0; i < countEmpty; i++)
         {
-            GameObject empty = Instantiate(emptyCirclePrefab, new Vector3(x + (i*emptyWidth), 400, 0), Quaternion.identity);
+            GameObject empty = Instantiate(emptyCirclePrefab, new Vector3(x + (i * emptyWidth), 400, 0), Quaternion.identity);
             empty.transform.SetParent(gameObject.transform);
             allEmptyRect.Add(empty);
         }
@@ -115,7 +122,7 @@ public class Game : MonoBehaviour {
     }
 
     public void ShowSuccessModalWindow()
-    {        
+    {
         this.successModalWindow.SetActive(true);
     }
 
@@ -124,6 +131,30 @@ public class Game : MonoBehaviour {
         this.failModalWindow.SetActive(true);
     }
 
+    public char[] GetState()
+    {
+        return state;
+    }
+
+    public List<GameObject> GetAllEmptyRect()
+    {
+        return allEmptyRect;
+    }
+
+    public List<char> GetSolution()
+    {
+        return playground.GetSolution();
+    }
+
+    public int[] GetPlayground()
+    {
+        return playground.GetPlayground();
+    }
+
+    public int GetCountCarrots()
+    {
+        return playground.GetCountCarrot();
+    }
 
     class Task
     {
