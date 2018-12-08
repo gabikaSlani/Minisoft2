@@ -14,6 +14,8 @@ public class Game : MonoBehaviour {
     public GameObject carrotPrefab;
     public GameObject hillPrefab;
     public GameObject emptyCirclePrefab;
+    public GameObject forwardCardPrefab;
+    public GameObject carrotCardPrefab;
     public GameObject yellowCircle;
     public GameObject successModalWindow;
     public GameObject failModalWindow;
@@ -30,6 +32,7 @@ public class Game : MonoBehaviour {
     List<GameObject> allCarrots;
     RectTransform emptyRect;
     List<GameObject> allEmptyRect;
+    GameObject[] allPutCards;
     float canvasWidth;
     RectTransform canvasRect;
     char[] state;
@@ -118,7 +121,88 @@ public class Game : MonoBehaviour {
             empty.transform.SetParent(gameObject.transform);
             allEmptyRect.Add(empty);
         }
+        allPutCards = new GameObject[countEmpty];
+        state = new char[countEmpty];
+        for (int i = 0; i < countEmpty; i++)
+        {
+            state[i] = 'E';
+        }
 
+    }
+
+    public void onClickForwardButton()
+    {
+        int lastEmpty = GetLastEmptyIndex();
+        if (lastEmpty == -1)
+        {
+            return;
+        }
+        Vector3 pos = allEmptyRect[lastEmpty].transform.position;
+        GameObject forward = Instantiate(forwardCardPrefab, pos, Quaternion.identity);
+        RectTransform forwardRect = (RectTransform)forward.transform;
+        RectTransform empty = (RectTransform)allEmptyRect[lastEmpty].transform;
+        forward.transform.SetParent(gameObject.transform);
+        forwardRect.sizeDelta = empty.sizeDelta;
+        AddCard(forward, lastEmpty, 'D');
+        forward.SendMessage("SetPosition", lastEmpty);
+    }
+
+    public void onClickCarrotButton()
+    {
+        int lastEmpty = GetLastEmptyIndex();
+        if (lastEmpty == -1)
+        {
+            return;
+        }
+        Vector3 pos = allEmptyRect[lastEmpty].transform.position;
+        GameObject carrot = Instantiate(carrotCardPrefab, pos, Quaternion.identity);
+        RectTransform carrotRect = (RectTransform)carrot.transform;
+        RectTransform empty = (RectTransform)allEmptyRect[lastEmpty].transform;
+        carrot.transform.SetParent(gameObject.transform);
+        Vector2 originalSize = carrotRect.sizeDelta;
+        carrotRect.sizeDelta = empty.sizeDelta;
+        AddCard(carrot, lastEmpty, 'M');
+        carrot.SendMessage("SetPosition", lastEmpty);
+    }
+
+    public void AddCard(GameObject card, int index, char type)
+    {
+        allPutCards[index] = card;
+        state[index] = type;
+    }
+
+    public void RemoveCard(int index)
+    {
+        Destroy(allPutCards[index]);
+        allPutCards[index] = null;
+        RemoveState(index);
+    }
+
+    public char[] GetState()
+    {
+        return state;
+    }
+
+    public void RemoveState(int index)
+    {
+        state[index] = 'E';
+    }
+
+    private int GetLastEmptyIndex()
+    {
+        bool bolo = false;
+        for (int i = state.Length - 1; i >= 0; i--)
+        {
+            if (state[i] != 'E')
+            {
+                bolo = true;
+            }
+            else if (state[i] == 'E' && (i == 0 || state[i - 1] != 'E') && !bolo)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void ShowSuccessModalWindow()
@@ -131,12 +215,12 @@ public class Game : MonoBehaviour {
         this.failModalWindow.SetActive(true);
     }
 
-    public char[] GetState()
+    public List<GameObject> GetAllEmptyRect()
     {
-        return state;
+        return allEmptyRect;
     }
 
-    public List<GameObject> GetAllEmptyRect()
+    public List<GameObject> GetEmpties()
     {
         return allEmptyRect;
     }

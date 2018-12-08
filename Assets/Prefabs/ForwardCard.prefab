@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 222638797936847648}
   - component: {fileID: 114731478085909756}
   - component: {fileID: 114380516256619410}
+  - component: {fileID: 114054421330744490}
   m_Layer: 5
   m_Name: ForwardCard
   m_TagString: Untagged
@@ -46,6 +47,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114054421330744490
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1018959859721070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd5f7164ffe7a58458a1d3d20228bc40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114380516256619410
 MonoBehaviour:
   m_ObjectHideFlags: 1

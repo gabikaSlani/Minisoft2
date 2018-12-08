@@ -1486,7 +1486,7 @@ GameObject:
   - component: {fileID: 827070502}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1601,6 +1601,10 @@ MonoBehaviour:
     type: 2}
   hillPrefab: {fileID: 1171969545018194, guid: 1de876e68cb433a4aa67216b67f26f21, type: 2}
   emptyCirclePrefab: {fileID: 1186736070422962, guid: ccd843e1c8022934a80a88ff267f46d7,
+    type: 2}
+  forwardCardPrefab: {fileID: 1018959859721070, guid: b4ceb9fd191b232478b868da8dd63920,
+    type: 2}
+  carrotCardPrefab: {fileID: 1730369791197674, guid: 07d3284aaddfbf145a2a0d40a18d543d,
     type: 2}
   yellowCircle: {fileID: 1829579663}
   successModalWindow: {fileID: 490744208}
@@ -2196,6 +2200,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 827070501}
     m_Modifications:
+    - target: {fileID: 114380516256619410, guid: b4ceb9fd191b232478b868da8dd63920,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 224892041283815742, guid: b4ceb9fd191b232478b868da8dd63920,
         type: 2}
       propertyPath: m_LocalPosition.x
@@ -2304,7 +2313,33 @@ Prefab:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114380516256619410, guid: b4ceb9fd191b232478b868da8dd63920,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114380516256619410, guid: b4ceb9fd191b232478b868da8dd63920,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114380516256619410, guid: b4ceb9fd191b232478b868da8dd63920,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 827070502}
+    - target: {fileID: 114380516256619410, guid: b4ceb9fd191b232478b868da8dd63920,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: onClickForwardButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 114380516256619410, guid: b4ceb9fd191b232478b868da8dd63920,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114054421330744490, guid: b4ceb9fd191b232478b868da8dd63920, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: b4ceb9fd191b232478b868da8dd63920, type: 2}
   m_IsPrefabAsset: 0
 --- !u!224 &1478580324 stripped
@@ -3052,7 +3087,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1971930693}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 827070502}
+        m_MethodName: onClickCarrotButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1971930693
