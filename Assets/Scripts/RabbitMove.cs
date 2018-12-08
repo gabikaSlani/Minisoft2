@@ -133,6 +133,7 @@ public class RabbitMove : MonoBehaviour
     {
         yellow.transform.position = allEmpty[index].transform.position;
         yellow.transform.SetAsLastSibling();
+        game.GetAllPutCards()[index].transform.SetAsLastSibling();
     }
 
     public void StartAnimation()

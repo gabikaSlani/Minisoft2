@@ -20,6 +20,7 @@ public class Game : MonoBehaviour {
     public GameObject successModalWindow;
     public GameObject failModalWindow;
     public GameObject rabbit;
+    public SceneLoader sceneLoader;
 
     public Button showSuccessModal;
     public Button showFailModal;
@@ -51,7 +52,43 @@ public class Game : MonoBehaviour {
             new Task(7, 7, 3),
             new Task(8, 7, 4)
         };
-        playground = new Playground(tasks[level]);
+        DrawLevel(level);
+
+    }
+
+    public void NextLevel()
+    {
+        if (level == 7)
+        {
+            sceneLoader.LoadNextScene();
+        }
+        else
+        {
+            level++;
+            for(int i = 0; i < state.Length; i++)
+            {
+                Destroy(allPutCards[i]);
+            }
+            for (int i = 0; i < allHills.Count; i++)
+            {
+                Destroy(allHills[i]);
+            }
+            for (int i = 0; i < allCarrots.Count; i++)
+            {
+                Destroy(allCarrots[i]);
+            }
+            for (int i = 0; i < allEmptyRect.Count; i++)
+            {
+                Destroy(allEmptyRect[i]);
+            }
+            DrawLevel(level);
+        }
+
+    }
+
+    private void DrawLevel(int newLevel)
+    {
+        playground = new Playground(tasks[newLevel]);
         canvasRect = (RectTransform)gameObject.transform;
         carrotRect = (RectTransform)carrotPrefab.transform;
         allHills = new List<GameObject>();
@@ -68,7 +105,6 @@ public class Game : MonoBehaviour {
         //state = new char[4] { 'D', 'D', 'M', 'D'};
         rabbit.transform.position = new Vector3(allHills[0].transform.position.x, allHills[0].transform.position.y + 58, 0);
         rabbit.transform.SetAsLastSibling();
-
     }
 
     // Update is called once per frame
@@ -186,6 +222,11 @@ public class Game : MonoBehaviour {
     public void RemoveState(int index)
     {
         state[index] = 'E';
+    }
+
+    public GameObject[] GetAllPutCards()
+    {
+        return allPutCards;
     }
 
     private int GetLastEmptyIndex()

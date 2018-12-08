@@ -1610,6 +1610,7 @@ MonoBehaviour:
   successModalWindow: {fileID: 490744208}
   failModalWindow: {fileID: 1770973478}
   rabbit: {fileID: 314443786}
+  sceneLoader: {fileID: 1271036821}
   showSuccessModal: {fileID: 1755294707}
   showFailModal: {fileID: 1278110069}
 --- !u!1 &1034314887
@@ -1918,7 +1919,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1203445165}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 827070502}
+        m_MethodName: NextLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1203445165
