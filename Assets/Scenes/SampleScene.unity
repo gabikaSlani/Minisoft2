@@ -333,9 +333,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e75a25aed40f6949a6b1c385317940a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  frame: 0
-  rabbitImage: {fileID: 0}
 --- !u!1 &98451520
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,6 +860,9 @@ MonoBehaviour:
   animator: {fileID: 314443790}
   yellow: {fileID: 1829579663}
   canvas: {fileID: 827070500}
+  scoreText: {fileID: 201783800}
+  succesMW: {fileID: 490744208}
+  failMW: {fileID: 1770973478}
 --- !u!1 &490744208
 GameObject:
   m_ObjectHideFlags: 0

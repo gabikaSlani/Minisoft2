@@ -25,10 +25,9 @@ public class Game : MonoBehaviour {
     int level;
     Task[] tasks;
     Playground playground;
-    //List<RectTransform> allHillsRect;
     List<GameObject> allHills;
     RectTransform carrotRect;
-    List<RectTransform> allCarrotsRect;
+    List<GameObject> allCarrots;
     RectTransform emptyRect;
     List<GameObject> allEmptyRect;
     float canvasWidth;
@@ -53,7 +52,7 @@ public class Game : MonoBehaviour {
         canvasRect = (RectTransform)gameObject.transform;
         carrotRect = (RectTransform)carrotPrefab.transform;
         allHills = new List<GameObject>();
-        allCarrotsRect = new List<RectTransform>();
+        allCarrots = new List<GameObject>();
         allEmptyRect = new List<GameObject>();
         canvasWidth = canvasRect.rect.width;
         yellowCircle.SetActive(false);
@@ -98,7 +97,8 @@ public class Game : MonoBehaviour {
             {
                 GameObject carrot = Instantiate(carrotPrefab, new Vector3(x + (i * hillWidth), 120, 0), Quaternion.identity);
                 carrot.transform.SetParent(gameObject.transform);
-                allCarrotsRect.Add((RectTransform)carrot.transform);
+                //allCarrotsRect.Add((RectTransform)carrot.transform);
+                allCarrots.Add(carrot);
             }
 
         }
@@ -154,6 +154,11 @@ public class Game : MonoBehaviour {
     public int GetCountCarrots()
     {
         return playground.GetCountCarrot();
+    }
+
+    public GameObject[] getCarrots()
+    {
+        return allCarrots.ToArray();
     }
 
     class Task
@@ -246,9 +251,4 @@ public class Game : MonoBehaviour {
             return this.solution;
         }
     }
-
-
-
-
-
 }

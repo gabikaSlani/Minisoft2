@@ -10,51 +10,123 @@ public class RabbitMove : MonoBehaviour
     public GameObject yellow;
     public Canvas canvas;
     public Text scoreText;
+    public GameObject succesMW;
+    public GameObject failMW;
 
     int frame;
     char[] state;
     List<GameObject> allEmpty;
+    GameObject[] allCarrots;
     Game game;
     int yellowIndex;
     List<char> solution;
     int[] playground;
     int carrots;
+    bool startAnimate;
+    bool cardD;
+    bool cardM;
+    bool cardE;
+    int rabbitPos;
 
     // Use this for initialization
     void Start()
     {
-        //len kvoli tomu ze ked bezi update na zaciatku ani nepadal na NullReferenceException a OutOfRangeException
-        state = new char[1] { 'E' };
-        yellowIndex = -1;
+        startAnimate = false;
+        cardD = false;
+        cardM = false;
+        cardE = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //kvoli animacii a posunu zaja
-        frame++;
-        //ked sa doanimuje zajac
-        if (frame == 155)
+        if (startAnimate)
         {
-            animator.SetBool("jump", false);
-            Debug.Log("konci animacia, yellowIndex=" + yellowIndex);
-            AnimateYellow(yellowIndex++);
-        }
-        //ked je animacia v stave jump - zajac sa hybe
-        if (animator.GetBool("jump"))
-        {
-            gameObject.transform.position = new Vector3(
-                gameObject.transform.position.x + 0.88f,
-                gameObject.transform.position.y,
-                gameObject.transform.position.z);
-        }
+            if (yellowIndex < state.Length)
+            {
+                if (!cardD && state[yellowIndex] == 'D')
+                {
+                    cardD = true;
+                    frame = 0;
+                    animator.SetBool("jump", true);
+                    rabbitPos++;
+                }
+                else if (!cardM && state[yellowIndex] == 'M')
+                {
+                    cardM = true;
+                    frame = 0;
+                    if (rabbitPos < playground.Length && playground[rabbitPos] == 1)
+                    {
+                        RemoveCarrot(rabbitPos);
+                        IncreaseScore();
+                    }
+                    AnimateYellow(yellowIndex + 1);
 
-    }
+                }
+                else if (!cardE && state[yellowIndex] == 'E')
+                {
+                    cardE = true;
+                    frame = 0;
+                    AnimateYellow(yellowIndex + 1);
+                }
 
-    public void AnimateRabbit()
-    {
-        animator.SetBool("jump", true);
-        frame = 0;
+                if (cardD)
+                {
+                    frame++;
+                    if (frame == 119)
+                    {
+                        animator.SetBool("jump", false);
+                        AnimateYellow(yellowIndex + 1);
+                    }
+                    if (frame == 200)
+                    {
+                        yellowIndex++;
+                        cardD = false;
+                    }
+                    if (animator.GetBool("jump"))
+                    {
+                        gameObject.transform.position = new Vector3(
+                            gameObject.transform.position.x + 1.18f,
+                            gameObject.transform.position.y,
+                            gameObject.transform.position.z);
+                    }
+                }
+
+                if (cardM)
+                {
+                    frame++;
+                    if (frame == 60)
+                    {
+                        yellowIndex++;
+                        cardM = false;
+                    }
+                }
+
+                if (cardE)
+                {
+                    frame++;
+                    if (frame == 60)
+                    {
+                        yellowIndex++;
+                        cardE = false;
+                    }
+                }
+            }
+            else
+            {
+                startAnimate = false;
+                if (SolutionIsGood())
+                {
+                    game.ShowSuccessModalWindow();
+                    succesMW.transform.SetAsLastSibling();
+                }
+                else
+                {
+                    game.ShowFailModalWindow();
+                    failMW.transform.SetAsLastSibling();
+                }
+            }
+        }
     }
 
     public void AnimateYellow(int index)
@@ -65,37 +137,22 @@ public class RabbitMove : MonoBehaviour
 
     public void StartAnimation()
     {
-        game = canvas.GetComponent<Game>();
-        //state = game.GetState();
-        allEmpty = game.GetAllEmptyRect();
-        yellowIndex = 0;
-        frame = 0;
-        carrots = 0;
-        solution = game.GetSolution();
-        state = solution.ToArray();
-        playground = game.GetPlayground();
-        AnimateYellow(yellowIndex);
-        yellow.SetActive(true);
-        while (yellowIndex < solution.Count)
+        if (!startAnimate)
         {
-            if (state[yellowIndex] == 'D')
-            {
-                AnimateRabbit();
-                Debug.Log("nasla som D animujem zajaca");
-            }
-            else if (state[yellowIndex] == 'M')
-            {
-                if (playground[yellowIndex] == 1)
-                {
-                    scoreText.text = (carrots++).ToString() + "/" + game.GetCountCarrots().ToString();
-                    Debug.Log("nasla som M, menim skore");
-                }
-                AnimateYellow(yellowIndex++);
-            }
-            else
-            {
-                AnimateYellow(yellowIndex++);
-            }
+            game = canvas.GetComponent<Game>();
+            state = game.GetState();
+            //state = new char[5] { 'D', 'D', 'D', 'D', 'D' };
+            allEmpty = game.GetAllEmptyRect();
+            yellowIndex = 0;
+            frame = 0;
+            carrots = 0;
+            allCarrots = game.getCarrots();
+            solution = game.GetSolution();
+            rabbitPos = 0;
+            playground = game.GetPlayground();
+            AnimateYellow(yellowIndex);
+            yellow.SetActive(true);
+            startAnimate = true;
         }
     }
 
@@ -109,5 +166,39 @@ public class RabbitMove : MonoBehaviour
             }
         }
         return true;
+    }
+
+    void IncreaseScore()
+    {
+        carrots++;
+        string vsetky = game.GetCountCarrots().ToString();
+        scoreText.text = carrots.ToString() + "/" + vsetky;
+    }
+
+    int GetIndexOfCarrot(int position)
+    {
+        int index = -1;
+        for (int i=0; i < playground.Length; i++)
+        {
+            if(playground[i] == 1)
+            {
+                index++;
+            }
+            if(i == position)
+            {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    void RemoveCarrot(int rabbitPos)
+    {
+        int index = GetIndexOfCarrot(rabbitPos);
+        if (index > -1) {      
+            GameObject carrot = allCarrots[index];
+            allCarrots[index] = null;
+            Destroy(carrot);
+        }
     }
 }
