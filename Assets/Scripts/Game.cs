@@ -22,9 +22,6 @@ public class Game : MonoBehaviour {
     public GameObject rabbit;
     public SceneLoader sceneLoader;
 
-    public Button showSuccessModal;
-    public Button showFailModal;
-
     int level;
     Task[] tasks;
     Playground playground;
@@ -52,20 +49,22 @@ public class Game : MonoBehaviour {
             new Task(7, 7, 3),
             new Task(8, 7, 4)
         };
-        DrawLevel(level);
+        playground = new Playground(tasks[level - 1]);
+        DrawLevel();
 
     }
 
     public void NextLevel()
     {
-        if (level == 7)
+        level++;
+        if (level == 9)
         {
             sceneLoader.LoadNextScene();
         }
         else
         {
-            level++;
-            for(int i = 0; i < state.Length; i++)
+            
+            for (int i = 0; i < state.Length; i++)
             {
                 Destroy(allPutCards[i]);
             }
@@ -81,14 +80,15 @@ public class Game : MonoBehaviour {
             {
                 Destroy(allEmptyRect[i]);
             }
-            DrawLevel(level);
+            playground = new Playground(tasks[level - 1]);
+            DrawLevel();
         }
 
     }
 
-    private void DrawLevel(int newLevel)
+    private void DrawLevel()
     {
-        playground = new Playground(tasks[newLevel]);
+        levelText.text = level + "";
         canvasRect = (RectTransform)gameObject.transform;
         carrotRect = (RectTransform)carrotPrefab.transform;
         allHills = new List<GameObject>();
@@ -98,7 +98,7 @@ public class Game : MonoBehaviour {
         yellowCircle.SetActive(false);
         successModalWindow.SetActive(false);
         failModalWindow.SetActive(false);
-        scoreText.text = "0/" + tasks[level].countCarrot.ToString();
+        scoreText.text = "0/" + tasks[level-1].countCarrot.ToString();
         CreatePlayground();
         CreateEmpty();
         //state v takejto forme lebo ho taham cez getter - zatial som nepotrebovala, testovala som na solution
@@ -122,6 +122,7 @@ public class Game : MonoBehaviour {
 
     void CreatePlayground()
     {
+
         RectTransform hillRect = (RectTransform)hillPrefab.transform;
         float hillWidth = hillRect.rect.width;
         int countHills = playground.GetHillsCount();
@@ -146,6 +147,7 @@ public class Game : MonoBehaviour {
 
     void CreateEmpty()
     {
+
         RectTransform emptyRect = (RectTransform)emptyCirclePrefab.transform;
         float emptyWidth = emptyRect.rect.width;
         int countEmpty = playground.GetSolution().Count;
@@ -164,6 +166,38 @@ public class Game : MonoBehaviour {
             state[i] = 'E';
         }
 
+    }
+
+    void DestroyPlayground()
+    {
+        for (int i = 0; i < allHills.Count; i++)
+        {
+            GameObject hill = allHills[i];
+            Destroy(hill);
+        }
+        for (int i = 0; i < allCarrots.Count; i++)
+        {
+            RemoveCarrot(i);
+        }
+        
+    }
+
+    void DestroyPutCards()
+    {
+        for (int i = 0; i < allPutCards.Length; i++)
+        {
+            Destroy(allPutCards[i]);
+            allPutCards[i] = null;
+        }
+    }
+
+    void DestroyEmptyCards()
+    {
+        for (int i = 0; i < allEmptyRect.Count; i++)
+        {
+            Destroy(allEmptyRect[i]);
+            allEmptyRect[i] = null;
+        }
     }
 
     public void onClickForwardButton()
@@ -199,6 +233,32 @@ public class Game : MonoBehaviour {
         carrotRect.sizeDelta = empty.sizeDelta;
         AddCard(carrot, lastEmpty, 'M');
         carrot.SendMessage("SetPosition", lastEmpty);
+    }
+
+    public void onClickEditButton()
+    {
+        DestroyPlayground();
+        allCarrots = new List<GameObject>();
+        CreatePlayground();
+        
+        scoreText.text = "0/" + tasks[level].countCarrot.ToString();
+        failModalWindow.SetActive(false);
+        yellowCircle.SetActive(false);
+        rabbit.transform.position = new Vector3(allHills[0].transform.position.x, allHills[0].transform.position.y + 58, 0);
+        rabbit.transform.SetAsLastSibling();
+
+    }
+
+    public void onClickRepeatButton()
+    {
+        DestroyPlayground();
+        DestroyPutCards();
+        DestroyEmptyCards();
+        DrawLevel();
+        failModalWindow.SetActive(false);
+        yellowCircle.SetActive(false);
+        rabbit.transform.position = new Vector3(allHills[0].transform.position.x, allHills[0].transform.position.y + 58, 0);
+        rabbit.transform.SetAsLastSibling();
     }
 
     public void AddCard(GameObject card, int index, char type)
@@ -261,11 +321,6 @@ public class Game : MonoBehaviour {
         return allEmptyRect;
     }
 
-    public List<GameObject> GetEmpties()
-    {
-        return allEmptyRect;
-    }
-
     public List<char> GetSolution()
     {
         return playground.GetSolution();
@@ -281,10 +336,18 @@ public class Game : MonoBehaviour {
         return playground.GetCountCarrot();
     }
 
-    public GameObject[] getCarrots()
+    public List<GameObject> getCarrots()
     {
-        return allCarrots.ToArray();
+        return allCarrots;
     }
+
+    public void RemoveCarrot(int index)
+    {
+        GameObject carrot = allCarrots[index];
+        allCarrots[index] = null;
+        Destroy(carrot);
+    }
+
 
     class Task
     {
@@ -356,6 +419,7 @@ public class Game : MonoBehaviour {
             return solution;
         }
 
+        
         public int GetCountCarrot()
         {
             return this.task.countCarrot;

@@ -38,7 +38,7 @@ public class DragAndDropForward : MonoBehaviour, IDragHandler, IBeginDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        List<GameObject> empties = game.GetEmpties();
+        List<GameObject> empties = game.GetAllEmptyRect();
         char[] state = game.GetState();
         bool touched = false;
         for (var i = 0; i < empties.Count; i++)

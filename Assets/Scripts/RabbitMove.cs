@@ -15,8 +15,8 @@ public class RabbitMove : MonoBehaviour
 
     int frame;
     char[] state;
-    List<GameObject> allEmpty;
-    GameObject[] allCarrots;
+    //List<GameObject> allEmpty;
+    //GameObject[] allCarrots;
     Game game;
     int yellowIndex;
     List<char> solution;
@@ -131,9 +131,13 @@ public class RabbitMove : MonoBehaviour
 
     public void AnimateYellow(int index)
     {
-        yellow.transform.position = allEmpty[index].transform.position;
+        yellow.transform.position = game.GetAllEmptyRect()[index].transform.position;
         yellow.transform.SetAsLastSibling();
-        game.GetAllPutCards()[index].transform.SetAsLastSibling();
+        GameObject currentCard = game.GetAllPutCards()[index];
+        if (currentCard != null)
+        {
+            currentCard.transform.SetAsLastSibling();
+        }
     }
 
     public void StartAnimation()
@@ -143,11 +147,11 @@ public class RabbitMove : MonoBehaviour
             game = canvas.GetComponent<Game>();
             state = game.GetState();
             //state = new char[5] { 'D', 'D', 'D', 'D', 'D' };
-            allEmpty = game.GetAllEmptyRect();
+            //allEmpty = game.GetAllEmptyRect();
             yellowIndex = 0;
             frame = 0;
             carrots = 0;
-            allCarrots = game.getCarrots();
+            //allCarrots = game.getCarrots();
             solution = game.GetSolution();
             rabbitPos = 0;
             playground = game.GetPlayground();
@@ -159,9 +163,9 @@ public class RabbitMove : MonoBehaviour
 
     public bool SolutionIsGood()
     {
-        for(int i=0; i < solution.Count; i++)
+        for (int i = 0; i < solution.Count; i++)
         {
-            if(solution[i] != state[i])
+            if (solution[i] != state[i])
             {
                 return false;
             }
@@ -179,13 +183,13 @@ public class RabbitMove : MonoBehaviour
     int GetIndexOfCarrot(int position)
     {
         int index = -1;
-        for (int i=0; i < playground.Length; i++)
+        for (int i = 0; i < playground.Length; i++)
         {
-            if(playground[i] == 1)
+            if (playground[i] == 1)
             {
                 index++;
             }
-            if(i == position)
+            if (i == position)
             {
                 return index;
             }
@@ -196,10 +200,9 @@ public class RabbitMove : MonoBehaviour
     void RemoveCarrot(int rabbitPos)
     {
         int index = GetIndexOfCarrot(rabbitPos);
-        if (index > -1) {      
-            GameObject carrot = allCarrots[index];
-            allCarrots[index] = null;
-            Destroy(carrot);
+        if (index > -1)
+        {
+            game.RemoveCarrot(index);
         }
     }
 }
