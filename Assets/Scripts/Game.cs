@@ -348,6 +348,12 @@ public class Game : MonoBehaviour {
         Destroy(carrot);
     }
 
+    public void QuitGame()
+    {
+        Debug.Log("koncim");
+        Application.Quit();
+    }
+
 
     class Task
     {

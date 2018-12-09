@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ public class RabbitMove : MonoBehaviour
     public GameObject succesMW;
     public GameObject failMW;
 
-    int frame;
+    float time;
     char[] state;
     //List<GameObject> allEmpty;
     //GameObject[] allCarrots;
@@ -28,7 +29,6 @@ public class RabbitMove : MonoBehaviour
     bool cardE;
     int rabbitPos;
 
-    // Use this for initialization
     void Start()
     {
         startAnimate = false;
@@ -37,7 +37,6 @@ public class RabbitMove : MonoBehaviour
         cardE = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (startAnimate)
@@ -47,14 +46,14 @@ public class RabbitMove : MonoBehaviour
                 if (!cardD && state[yellowIndex] == 'D')
                 {
                     cardD = true;
-                    frame = 0;
+                    time = 0f;
                     animator.SetBool("jump", true);
                     rabbitPos++;
                 }
                 else if (!cardM && state[yellowIndex] == 'M')
                 {
                     cardM = true;
-                    frame = 0;
+                    time = 0f;
                     if (rabbitPos < playground.Length && playground[rabbitPos] == 1)
                     {
                         RemoveCarrot(rabbitPos);
@@ -66,36 +65,32 @@ public class RabbitMove : MonoBehaviour
                 else if (!cardE && state[yellowIndex] == 'E')
                 {
                     cardE = true;
-                    frame = 0;
+                    time = 0f;
                     AnimateYellow(yellowIndex + 1);
                 }
 
                 if (cardD)
                 {
-                    frame++;
-                    if (frame == 119)
+                    if (time >= 1.971448f && time < 2f)
                     {
                         animator.SetBool("jump", false);
                         AnimateYellow(yellowIndex + 1);
                     }
-                    if (frame == 200)
+                    else if (time >= 3f && time < 3.1f)
                     {
                         yellowIndex++;
                         cardD = false;
                     }
                     if (animator.GetBool("jump"))
                     {
-                        gameObject.transform.position = new Vector3(
-                            gameObject.transform.position.x + 1.18f,
-                            gameObject.transform.position.y,
-                            gameObject.transform.position.z);
+                        gameObject.transform.Translate(Vector3.right * Time.deltaTime * 72f);
                     }
                 }
 
                 if (cardM)
                 {
-                    frame++;
-                    if (frame == 60)
+                    time += Time.deltaTime;
+                    if (time >= 0.9f && time < 1f)
                     {
                         yellowIndex++;
                         cardM = false;
@@ -104,8 +99,8 @@ public class RabbitMove : MonoBehaviour
 
                 if (cardE)
                 {
-                    frame++;
-                    if (frame == 60)
+                    time += Time.deltaTime;
+                    if (time >= 0.9f && time < 1f)
                     {
                         yellowIndex++;
                         cardE = false;
@@ -149,7 +144,7 @@ public class RabbitMove : MonoBehaviour
             //state = new char[5] { 'D', 'D', 'D', 'D', 'D' };
             //allEmpty = game.GetAllEmptyRect();
             yellowIndex = 0;
-            frame = 0;
+            time = 0f;
             carrots = 0;
             //allCarrots = game.getCarrots();
             solution = game.GetSolution();
@@ -205,4 +200,6 @@ public class RabbitMove : MonoBehaviour
             game.RemoveCarrot(index);
         }
     }
+
+
 }
